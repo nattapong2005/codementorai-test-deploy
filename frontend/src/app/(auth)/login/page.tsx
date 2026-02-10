@@ -1,0 +1,100 @@
+"use client";
+
+import React, { useState } from 'react';
+import { useRouter } from "next/navigation";
+import { MdEmail } from 'react-icons/md';
+import { TbLockPassword } from 'react-icons/tb';
+import { useAuth } from '@/app/context/AuthContext';
+import { toast } from 'react-toastify';
+const Login: React.FC = () => {
+
+  const router = useRouter();
+  const [std_id, setstd_id] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const {login} = useAuth()
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!std_id) return toast.error('กรุณากรอกรหัสนักศึกษา');
+    if (!password) return toast.error('กรุณากรอกรหัสผ่าน');
+
+    try {
+      const data = await login({std_id, password});
+      await toast.success('เข้าสู่ระบบสําเร็จ');
+      setTimeout(() => {
+        if (data.role === "TEACHER") {
+          router.push('/teacher/classrooms');
+        } else if (data.role === "STUDENT") {
+          router.push('/student/classrooms');
+        } else if (data.role === "ADMIN") {
+          router.push('/admin');
+        }
+      }, 1000); 
+
+    } catch (err: unknown) {
+      const error = err as { response: { data: { message: string } } };
+      toast.error(error.response?.data?.message || 'เข้าสู่ระบบไม่สําเร็จ');
+
+    }
+  }
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-blue-700 flex items-center justify-center p-4">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-8 w-full max-w-6xl">
+        <div className="hidden md:block flex-1 text-center md:text-left text-white">
+          <h1 className='text-5xl font-bold mb-5'>CodeMentor AI</h1>
+          <p className='text-lg max-w-md text-gray-200'>ระบบที่ช่วยให้ผู้สอนติดตามความคืบหน้าของงานในวิชาการเขียนโปรแกรม และให้ Feedback ที่เหมาะสมต่อการพัฒนาทักษะการเขียนโปรแกรม</p>
+        </div>
+        <div className="flex-1 w-full max-w-lg bg-white shadow-2xl rounded-lg p-6 sm:p-10">
+          <div className="text-center mb-4">
+            <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-2">
+              ยินดีต้อนรับ
+            </h1>
+            <p>กรอกข้อมูลเพื่อเข้าสู่ระบบ</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-6">
+
+
+            <div className="space-y-2">
+              <label className="text-base font-semibold text-gray-700 flex gap-2 items-center">
+                <MdEmail /> เลขประจำตัวนักเรียนนักศึกษา หรือ รหัสผู้สอน
+              </label>
+              <div>
+                <input
+                  type="text"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg block w-full pl-3 py-3.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 outline-none"
+                  placeholder="68219010001"
+                  value={std_id}
+                  onChange={e => setstd_id(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex gap-2 items-center text-base font-semibold text-gray-700">
+                <TbLockPassword /> รหัสผ่าน
+              </label>
+              <div>
+                <input
+                  type="password"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-lg block w-full pl-3 py-3.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 outline-none"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="cursor-pointer w-full py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0"
+            >
+              <i className="fas fa-sign-in-alt mr-2"></i>เข้าสู่ระบบ
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
