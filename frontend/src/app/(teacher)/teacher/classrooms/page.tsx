@@ -190,36 +190,49 @@ export default function Page() {
         </div>
       </div>
       <div className="h-px bg-gray-200 w-full mb-8" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-        {classroom.map((e) => (
-          <Link key={e.class_id} href={`/teacher/classrooms/${e.class_id}`} className="group block h-full">
-            <div className="bg-white rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col relative">
-              <div className="h-32 p-6 relative flex flex-col justify-between" style={{ backgroundColor: e.class_color }}>
-                <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
-                <h1 className="text-xl font-bold text-white z-10 line-clamp-2 leading-tight">
-                  {e.class_name}
-                </h1>
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h2 className="text-gray-600 text-sm line-clamp-3 mb-4 leading-relaxed">
-                    {e.description || "ไม่มีคำอธิบายรายวิชา"}
-                  </h2>
+      {classroom.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-dashed border-gray-300 shadow-sm">
+          <div className="bg-gray-50 p-4 rounded-full mb-4">
+            <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-bold text-gray-700">ไม่พบชั้นเรียนของคุณ</h3>
+          <p className="text-gray-500 mt-1">เริ่มสร้างชั้นเรียนใหม่เพื่อจัดการการเรียนการสอน</p>
+
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          {classroom.map((e) => (
+            <Link key={e.class_id} href={`/teacher/classrooms/${e.class_id}`} className="group block h-full">
+              <div className="bg-white rounded-lg overflow-hidden border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col relative">
+                <div className="h-32 p-6 relative flex flex-col justify-between" style={{ backgroundColor: e.class_color }}>
+                  <div className="absolute top-[-20%] right-[-10%] w-32 h-32 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+                  <h1 className="text-xl font-bold text-white z-10 line-clamp-2 leading-tight">
+                    {e.class_name}
+                  </h1>
                 </div>
-                <div className="flex justify-end mt-auto pt-2 relative">
-                  <button
-                    type="button"
-                    onClick={(ev) => handleOpenMenu(ev, e)}
-                    className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors z-20"
-                  >
-                    <span className="text-xl leading-none">⋮</span>
-                  </button>
+                <div className="p-6 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-gray-600 text-sm line-clamp-3 mb-4 leading-relaxed">
+                      {e.description || "ไม่มีคำอธิบายรายวิชา"}
+                    </h2>
+                  </div>
+                  <div className="flex justify-end mt-auto pt-2 relative">
+                    <button
+                      type="button"
+                      onClick={(ev) => handleOpenMenu(ev, e)}
+                      className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors z-20"
+                    >
+                      <span className="text-xl leading-none">⋮</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+            </Link>
+          ))}
+        </div>
+      )}
       <MyModal isOpen={isCreateClassModalOpen} onClose={() => setIsCreateClassModalOpen(false)}>
         <form onSubmit={handleSubmit}>
           <h1 className="mb-5 text-2xl font-bold">สร้างชั้นเรียนใหม่</h1>
